@@ -6,6 +6,9 @@ let route = express.Router()
 
 const apiCtrl = require('../controllers/apiController.js')
 
+//0.0请求首页轮播图数据
+route.get('/api/getlunbo', apiCtrl.getlunbo)
+
 // 1.0 请求图文资讯
 route.get('/api/getnewslist', apiCtrl.getnewslist)
 

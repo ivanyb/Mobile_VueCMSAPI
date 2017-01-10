@@ -5,6 +5,20 @@ let fialState = 1 // 表示失败
 // 1.0 7牛云存储域名
 let domain = 'http://ofv795nmp.bkt.clouddn.com/'
 
+exports.getlunbo= (req, res) => {
+ let resObj = {status: successState, message: [{
+            url: 'http://www.itcast.cn/subject/phoneweb/index.html',
+            img: 'http://ofv795nmp.bkt.clouddn.com/vuelogobanner1.jpg'
+          }, {
+            url: 'http://www.itcast.cn/subject/phoneweb/index.html',
+            img: 'http://ofv795nmp.bkt.clouddn.com/vuelogobanner2-1.jpg'
+          }]}
+
+     res.end(JSON.stringify(resObj))
+
+}
+
+
 // 1.0 获取图片新闻资讯列表
 exports.getnewslist = (req, res) => {
    // 代表返回的数据结构
