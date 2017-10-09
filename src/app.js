@@ -1,4 +1,4 @@
-'use strict'
+﻿'use strict'
 
 const express = require('express');
 
@@ -6,7 +6,9 @@ let app = express();
 
 //1.0 初始化orm
 const orm = require('orm');
-app.use(orm.express('mysql://root:123456@127.0.0.1:3306/dtcmsdb4',{
+orm.settings.set("connection.reconnect", true);
+orm.settings.set("connection.pool", true);
+app.use(orm.express('mysql://root:root@127.0.0.1:3306/dtcmsdb4',{
 	define:function(db,models,next){
   
 		next();
@@ -25,11 +27,13 @@ app.all('/api/*',(req,res,next)=>{
 	next();
 });
 
+app.use(express.static(__dirname+'/upload/'));
+
 //2.0 设置路由规则
 const apiRoute = require('./routes/apiRoute.js');
 app.use('/',apiRoute);
 
-app.listen(8899,'127.0.0.1',()=>{
+app.listen(8888,()=>{
 
-	console.log('api服务已启动, :8899');
+	console.log('api服务已启动, :8888');
 });

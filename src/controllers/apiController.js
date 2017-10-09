@@ -1,9 +1,10 @@
-'use strict'
+﻿'use strict'
 
 let successState = 0 // 表示成功
 let fialState = 1 // 表示失败
 // 1.0 7牛云存储域名
-let domain = 'http://ofv795nmp.bkt.clouddn.com/'
+//let domain = 'http://ofv795nmp.bkt.clouddn.com/'
+let domain = 'http://139.199.192.48:8888'
 
 exports.getlunbo= (req, res) => {
  let resObj = {status: successState, message: [{
@@ -34,7 +35,7 @@ exports.getnewslist = (req, res) => {
    ,img_url:图片地址，前缀是7牛云存储域名
     */
   let sql = " SELECT id,title,add_time,left(zhaiyao,25) as zhaiyao,click,concat('" + domain + "',img_url) as img_url FROM dt_article where img_url > '' and channel_id = 6 limit 0,10 "
-  console.log('获取图文资讯sql语句：============>', sql)
+  //console.log('获取图文资讯sql语句：============>', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
       // 4.0 判断是否异常
       if (err)    {
@@ -60,7 +61,7 @@ exports.getnew = (req, res) => {
 
    // 2.0 执行查询操作
   let sql = 'select id,title,click,add_time,content from dt_article  where id=' + newid
-  console.log('获取资讯明细sql===>', sql)
+  //console.log('获取资讯明细sql===>', sql)
   req.db.driver.execQuery(sql, (err, data) => {
    // 3.0 判断是否异常
       if (err)    {
@@ -97,7 +98,7 @@ exports.getgoods = (req, res) => {
    ,img_url:图片地址，前缀是7牛云存储域名
     */
   let sql = `SELECT a.id,a.title,a.add_time,left(a.zhaiyao,25) as zhaiyao,a.click,concat('${domain}',a.img_url) as img_url,b.sell_price,b.market_price,b.stock_quantity FROM dt_article as a,dt_article_attribute_value b where a.id = b.article_id and a.channel_id = 7 limit ${skipcount},${pagesize} `
-  console.log('获取图文资讯sql语句：============>', sql)
+  //console.log('获取图文资讯sql语句：============>', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
       // 4.0 判断是否异常
     if (err) {
@@ -134,7 +135,7 @@ exports.getgooddesc = (req, res) => {
  
  let id = req.params.id;
   let sql = ` SELECT title,content FROM dt_article da WHERE da.id = ${id} `
-  console.log(	'获取商品图文描述sql语句：============>', sql)
+  //console.log(	'获取商品图文描述sql语句：============>', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
       // 4.0 判断是否异常
     if (err) {
@@ -159,7 +160,7 @@ exports.getgoodsinfo = (req, res) => {
  let id = req.params.id;
   let sql = ` SELECT da.id,da.title,da.add_time,daa.goods_no,daa.stock_quantity,daa.market_price,daa.sell_price FROM dt_article da , dt_article_attribute_value daa 
 				WHERE  da.id = daa.article_id and da.id = ${id} `
-  console.log(	'获取商品获取商品标题，价格，参数区数据sql语句：============>', sql)
+  //console.log(	'获取商品获取商品标题，价格，参数区数据sql语句：============>', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
       // 4.0 判断是否异常
     if (err) {
@@ -186,14 +187,14 @@ exports.getshopcarlist = (req, res) => {
    // 2.0 执行查询操作
   let sql = `
   			  SELECT count(distinct tb1.id) as cou, tb1.* FROM (
-				SELECT  da.id,da.title,daa.sell_price,alb.thumb_path
+				SELECT  da.id,da.title,daa.sell_price,concat('${domain}',alb.thumb_path) as thumb_path
 				  FROM dt_article da 
 				  LEFT JOIN dt_article_attribute_value daa ON (da.id = daa.article_id)
 				  LEFT JOIN dt_article_albums alb ON (da.id = alb.article_id)
 				WHERE  da.id IN(${ids}) ) AS tb1 GROUP BY tb1.id
   `
 
-  console.log('获取购物车列表sql===>', sql)
+  //console.log('获取购物车列表sql===>', sql)
   req.db.driver.execQuery(sql, (err, data) => {
    // 3.0 判断是否异常
       if (err)    {
@@ -217,10 +218,10 @@ exports.getimages = (req, res) => {
 
   let cateid = req.params.cateid - 0
 
-  let sql = ' select id,title,img_url,zhaiyao from dt_article where channel_id = 9 and category_id=' + cateid
+  let sql = ` select id,title,concat('${domain}',img_url) as img_url,zhaiyao from dt_article where channel_id = 9 and category_id=` + cateid
 
   if (cateid <= 0) {
-    sql = ' select * from dt_article where channel_id = 9 '
+    sql = `select id,title,concat('${domain}',img_url) as img_url,zhaiyao from dt_article where channel_id = 9`
   }
 
    // 3.0 利用orm发送sql语句查询出来分页数据即可
@@ -228,7 +229,7 @@ exports.getimages = (req, res) => {
 
     */
 
-  console.log('获取图片分享sql语句：============>', sql)
+  //console.log('获取图片分享sql语句：============>', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
       // 4.0 判断是否异常
     if (err) {
@@ -254,9 +255,9 @@ exports.getimage = (req, res) => {
   let newid = req.params.imgid
 
    // 2.0 执行查询操作
-  let sql = `select thumb_path as src  from dt_article_albums where article_id =${newid}`
+  let sql = `select concat('${domain}',thumb_path )as src  from dt_article_albums where article_id =${newid}`
 
-  console.log('获取图片分享明细中缩略图sql===>', sql)
+  //console.log('获取图片分享明细中缩略图sql===>', sql)
   req.db.driver.execQuery(sql, (err, data) => {
    // 3.0 判断是否异常
       if (err)    {
@@ -284,7 +285,7 @@ exports.getimageInfo = (req, res) => {
    // 2.0 执行查询操作
   let sql = `select id,title,click,add_time,content from dt_article where id=${newid}`
 
-  console.log('获取图片分享明细sql===>', sql)
+  //console.log('获取图片分享明细sql===>', sql)
   req.db.driver.execQuery(sql, (err, data) => {
    // 3.0 判断是否异常
       if (err)    {
@@ -310,7 +311,7 @@ exports.getimgcategory = (req, res) => {
 
     */
   let sql = ' select title,id from dtcmsdb4.dt_article_category where channel_id = 9 '
-  console.log('获取图片分享分类sql语句：============>', sql)
+  //console.log('获取图片分享分类sql语句：============>', sql)
   req.db.driver.execQuery(sql, (err, datas) => {
       // 4.0 判断是否异常
     if (err) {
@@ -340,7 +341,7 @@ exports.getcomments = (req, res) => {
    // 2.0 执行查询操作
   let sql = `select user_name,add_time,content from dt_article_comment where article_id = ${artid} order by add_time desc limit ${skipCount},${pagesize}`
 
-  console.log('获取评论sql===>', sql)
+  //console.log('获取评论sql===>', sql)
   req.db.driver.execQuery(sql, (err, data) => {
    // 3.0 判断是否异常
       if (err)    {
@@ -376,7 +377,7 @@ exports.postcomment = (req, res) => {
                                 content,is_lock,add_time,is_reply,reply_content,reply_time)
                   values (7,${artid},0,0,'匿名用户','127.0.0.1','${commentObj.content}',0,NOW(),0,'',NOW())`
 
-      console.log('post提交评论sql===>', sql)
+      //console.log('post提交评论sql===>', sql)
       req.db.driver.execQuery(sql, (err, data) => {
        // 3.0 判断是否异常
           if (err)    {
@@ -396,3 +397,89 @@ exports.postcomment = (req, res) => {
 }
 
 
+
+
+
+// 品牌管理
+exports.getprodlist = (req, res) => {
+   // 代表返回的数据结构
+  let resObj = {status: successState, message: ''}
+
+
+   // 2.0 执行查询操作
+  let sql = `select * from dc_product`;
+
+  //console.log('获取品牌列表sql===>', sql)
+  req.db.driver.execQuery(sql, (err, data) => {
+   // 3.0 判断是否异常
+      if (err)    {
+         resObj.status = fialState
+         resObj.message = err.message
+         res.end(JSON.stringify(resObj))
+         return
+      }
+
+    // 4.0 获取数据成功
+      resObj.message = data
+      res.end(JSON.stringify(resObj))
+  })
+}
+
+
+// 删除品牌
+exports.delproduct = (req, res) => {
+   // 代表返回的数据结构
+  let resObj = {status: successState, message: ''}
+  let id = req.params.id;
+
+   // 2.0 执行查询操作
+  let sql = `delete from dc_product where id=${id}`;
+
+  //console.log('删除品牌sql===>', sql);
+  req.db.driver.execQuery(sql, (err) => {
+   // 3.0 判断是否异常
+      if (err)    {
+         resObj.status = fialState
+         resObj.message = err.message
+         res.end(JSON.stringify(resObj))
+         return
+      }
+
+    // 4.0 获取数据成功
+      resObj.message = '删除品牌数据ok'
+      res.end(JSON.stringify(resObj))
+  })
+}
+
+// 新增品牌
+exports.addproduct = (req, res) => {
+   // 代表返回的数据结构
+  let resObj = {status: successState, message: ''}
+
+
+  //获取评论内容
+  req.on('data',(chunk)=>{
+    let bodyTxt = chunk.toString();
+    const qs=   require('querystring');
+    let bodyObj = qs.parse(bodyTxt);
+
+       // 2.0 执行查询操作
+      let sql = `insert into dc_product(name,ctime) values ('${bodyObj.name}',NOW())`
+
+      //console.log('新增品牌sql===>', sql)
+      req.db.driver.execQuery(sql, (err, data) => {
+       // 3.0 判断是否异常
+          if (err)    {
+             resObj.status = fialState
+             resObj.message = err.message
+             res.end(JSON.stringify(resObj))
+             return
+          }
+
+        // 4.0 获取数据成功
+          resObj.message = '新增品牌成功'
+          res.end(JSON.stringify(resObj))
+      })
+
+  })
+}
